@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -19,9 +21,22 @@ class ComparisonSummary(BaseModel):
     cost_ratio_eth_over_near: float
 
 
+class SimpleChainSnapshot(BaseModel):
+    cost_usd: float = Field(ge=0)
+    speed: str
+
+
+class SimpleGasComparisonResponse(BaseModel):
+    near: SimpleChainSnapshot
+    ethereum: SimpleChainSnapshot
+
+
 class GasComparisonResponse(BaseModel):
     generated_at: str
     near: ChainGasSnapshot
     ethereum: ChainGasSnapshot
     summary: ComparisonSummary
     methodology: dict[str, str]
+    sources: dict[str, list[str]]
+    is_stale: bool = False
+    stale_reason: Optional[str] = None

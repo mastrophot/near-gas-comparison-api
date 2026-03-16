@@ -5,9 +5,20 @@ FastAPI service that provides real-time gas cost comparison between **NEAR** and
 ## Endpoint
 
 - `GET /api/gas/compare`
+- `GET /api/gas/compare/simple` (compact response for quick integration)
 - In-memory cache (30s default) to reduce upstream RPC load
+- Stale-cache fallback if upstream RPCs are temporarily unavailable
 
 Example response:
+
+```json
+{
+  "near": { "cost_usd": 0.0012, "speed": "1.2s" },
+  "ethereum": { "cost_usd": 0.56, "speed": "12.3s" }
+}
+```
+
+Simple format:
 
 ```json
 {

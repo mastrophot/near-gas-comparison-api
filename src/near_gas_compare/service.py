@@ -6,7 +6,7 @@ import time
 
 from .config import settings
 from .models import ChainGasSnapshot, ComparisonSummary, GasComparisonResponse
-from .providers import DataProvider
+from .providers import DataProvider, ProviderError
 
 
 class GasComparisonService:
@@ -26,7 +26,18 @@ class GasComparisonService:
                 if (time.monotonic() - self._cached_at_monotonic) < settings.cache_ttl_seconds:
                     return self._cached_payload
 
-            payload = await self._compute_once()
+            try:
+                payload = await self._compute_once()
+            except ProviderError as exc:
+                if self._cached_payload is None:
+                    raise
+                return self._cached_payload.model_copy(
+                    update={
+                        "is_stale": True,
+                        "stale_reason": f"Serving cached response due to upstream error: {exc}",
+                    }
+                )
+
             if settings.cache_ttl_seconds > 0:
                 self._cached_payload = payload
                 self._cached_at_monotonic = time.monotonic()
@@ -92,4 +103,11 @@ class GasComparisonService:
                 "speed": f"Average block time over latest {sample} blocks.",
                 "prices": "CoinGecko near/usd and ethereum/usd spot prices.",
             },
+            sources={
+                "near_rpc": [x.strip() for x in settings.near_mainnet_rpc_urls.split(",") if x.strip()],
+                "ethereum_rpc": [x.strip() for x in settings.eth_mainnet_rpc_urls.split(",") if x.strip()],
+                "price_feed": [settings.coingecko_price_url],
+            },
+            is_stale=False,
+            stale_reason=None,
         )

@@ -91,9 +91,20 @@ def test_gas_compare_success() -> None:
     assert data["ethereum"]["chain"] == "ethereum"
     assert data["near"]["cost_usd"] < data["ethereum"]["cost_usd"]
     assert "methodology" in data
+    assert "sources" in data
+    assert data["is_stale"] is False
+    assert data["stale_reason"] is None
 
     # Cached response (default 30s) should avoid repeated upstream calls.
     second = client.get("/api/gas/compare")
     assert second.status_code == 200
     assert near_gas_price_route.call_count == 1
     assert prices_route.call_count == 1
+
+    # Compact endpoint should preserve the requested minimal shape.
+    compact = client.get("/api/gas/compare/simple")
+    assert compact.status_code == 200
+    compact_data = compact.json()
+    assert set(compact_data.keys()) == {"near", "ethereum"}
+    assert "cost_usd" in compact_data["near"]
+    assert "speed" in compact_data["near"]
