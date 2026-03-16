@@ -1,0 +1,48 @@
+{
+  "info": {
+    "name": "NEAR Gas Comparison API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Requests for testing NEAR Gas Comparison API"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Gas Compare (Full)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/gas/compare",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "gas", "compare"]
+        }
+      }
+    },
+    {
+      "name": "Gas Compare (Simple)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/gas/compare/simple",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "gas", "compare", "simple"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}

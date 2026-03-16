@@ -27,6 +27,14 @@ Simple format:
 }
 ```
 
+
+## API Directory Pack
+
+Included in `docs/` for faster listing submission:
+
+- `docs/api-directory-submission-pack.md`
+- `docs/postman_collection.json`
+
 ## Data Sources
 
 - NEAR RPC (with fallback): `rpc.mainnet.near.org`, `free.rpc.fastnear.com`
